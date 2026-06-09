@@ -4,6 +4,7 @@ import { LucideAngularModule } from 'lucide-angular';
 import { PredictionForm } from '../prediction-form/prediction-form';
 import { Match } from '../../../core/models/match.model';
 import { Prediction } from '../../../core/models/prediction.model';
+import { getTeamName } from '../../../utils/team-names';
 
 @Component({
   selector: 'app-match-card',
@@ -26,6 +27,10 @@ export class MatchCard {
 
   get isPredictionCorrect(): boolean {
     return this.prediction?.correctWinner === true;
+  }
+
+  teamName(name: string): string {
+    return getTeamName(name);
   }
 
   onPredictionSaved() {

@@ -12,13 +12,13 @@
               <span class="text-lg leading-none shrink-0">{{ match.homeTeamFlag }}</span>
             }
             <span class="text-sm font-semibold text-base-content truncate">{{
-              match.homeTeam
+              teamName(match.homeTeam)
             }}</span>
           </div>
           <span class="text-xs font-bold text-base-content/40 shrink-0">vs</span>
           <div class="flex items-center gap-2 flex-1 min-w-0 justify-end">
             <span class="text-sm font-semibold text-base-content truncate text-right">{{
-              match.awayTeam
+              teamName(match.awayTeam)
             }}</span>
             @if (match.awayTeamFlag) {
               <span class="text-lg leading-none shrink-0">{{ match.awayTeamFlag }}</span>

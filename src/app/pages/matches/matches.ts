@@ -1,5 +1,6 @@
 import { ChangeDetectorRef, Component, DestroyRef, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { getTeamName } from '../../utils/team-names';
 import { MatchCard } from '../../shared/components/match-card/match-card';
 import { MatchService } from '../../core/services/match.service';
 import { PredictionService } from '../../core/services/prediction.service';
@@ -107,6 +108,8 @@ export class Matches implements OnInit {
         (match) =>
           match.homeTeam?.toLowerCase().includes(q) ||
           match.awayTeam?.toLowerCase().includes(q) ||
+          getTeamName(match.homeTeam)?.toLowerCase().includes(q) ||
+          getTeamName(match.awayTeam)?.toLowerCase().includes(q) ||
           match.group?.toLowerCase().includes(q),
       );
     }
