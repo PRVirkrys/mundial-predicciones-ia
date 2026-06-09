@@ -18,6 +18,10 @@ import {
   Flag,
   Inbox,
   Menu,
+  ArrowUp,
+  ArrowDown,
+  Search,
+  X,
 } from 'lucide-angular';
 
 import { routes } from './app.routes';
@@ -28,7 +32,23 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideHttpClient(),
     importProvidersFrom(
-      LucideAngularModule.pick({ User, Lock, Trophy, Volleyball, Star, Calendar, ArrowLeft, Bell, Flag, Inbox, Menu }),
+      LucideAngularModule.pick({
+        User,
+        Lock,
+        Trophy,
+        Volleyball,
+        Star,
+        Calendar,
+        ArrowLeft,
+        Bell,
+        Flag,
+        Inbox,
+        Menu,
+        ArrowUp,
+        ArrowDown,
+        Search,
+        X,
+      }),
     ),
   ],
 };

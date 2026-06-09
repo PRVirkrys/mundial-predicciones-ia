@@ -6,4 +6,7 @@ export interface Match {
   matchDate: string;
   homeGoals: number | null;
   awayGoals: number | null;
+  homeTeamFlag: string;
+  awayTeamFlag: string;
+  group: string;
 }

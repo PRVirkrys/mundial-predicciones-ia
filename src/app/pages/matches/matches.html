@@ -4,15 +4,72 @@
     <p class="text-sm text-base-content/50 mt-1">Mundial 2026</p>
   </div>
 
-  <!-- Tabs -->
-  <div role="tablist" class="tabs tabs-box mb-5">
-    <a role="tab" class="tab tab-active">Próximos</a>
-    <a role="tab" class="tab">Jugados</a>
+  <!-- Buscador -->
+  <label class="input input-bordered flex items-center gap-2 w-full mb-4">
+    <lucide-icon name="search" size="16" color="currentColor" class="opacity-50"></lucide-icon>
+    <input
+      type="search"
+      class="grow"
+      placeholder="Buscar equipo o grupo..."
+      [(ngModel)]="searchQuery"
+      (input)="onSearchChange()"
+    />
+    @if (searchQuery) {
+      <button class="btn btn-ghost btn-xs btn-circle" (click)="clearSearch()">
+        <lucide-icon name="x" size="14" color="currentColor"></lucide-icon>
+      </button>
+    }
+  </label>
+
+  <!-- Tabs + Filtros -->
+  <div class="flex flex-col gap-3 mb-5">
+    <!-- Tabs: full width on mobile -->
+    <div role="tablist" class="tabs tabs-box w-full sm:w-auto">
+      <a role="tab" class="tab flex-1 sm:flex-none" [class.tab-active]="activeTab === 'all'" (click)="activeTab = 'all'"
+        >Todos</a
+      >
+      <a
+        role="tab"
+        class="tab flex-1 sm:flex-none"
+        [class.tab-active]="activeTab === 'predictions'"
+        (click)="activeTab = 'predictions'"
+        >Mis predicciones</a
+      >
+      <a
+        role="tab"
+        class="tab flex-1 sm:flex-none"
+        [class.tab-active]="activeTab === 'played'"
+        (click)="activeTab = 'played'"
+        >Jugados</a
+      >
+    </div>
+
+    <!-- Filtros en una sola línea -->
+    <div class="flex items-center gap-2">
+      <select class="select select-sm select-bordered flex-1 sm:flex-none sm:w-44" [(ngModel)]="selectedGroup">
+        <option value="all">Todos los grupos</option>
+        @for (group of availableGroups; track group) {
+          <option [value]="group">{{ group }}</option>
+        }
+      </select>
+
+      <button
+        class="btn btn-ghost btn-sm gap-1.5 ml-auto sm:ml-0"
+        (click)="sortOrder = sortOrder === 'asc' ? 'desc' : 'asc'"
+      >
+        <lucide-icon
+          [name]="sortOrder === 'asc' ? 'arrow-up' : 'arrow-down'"
+          size="14"
+          color="currentColor"
+        ></lucide-icon>
+        {{ sortOrder === 'asc' ? 'Más próximos' : 'Más lejanos' }}
+      </button>
+    </div>
   </div>
 
   <!-- Contenido de tab activo -->
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-    @for (match of matches; track $index) {
+    @for (match of getMatchesFiltered(); track match.id) {
       <app-match-card
         [match]="match"
         [prediction]="getPredictionForMatch(match.id)"

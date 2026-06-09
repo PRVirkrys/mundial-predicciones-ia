@@ -7,7 +7,7 @@ import { Prediction } from '../models/prediction.model';
   providedIn: 'root',
 })
 export class PredictionService {
-  private apiUrl = 'http://localhost:8081';
+  private apiUrl = `http://${window.location.hostname}:8081`;
 
   constructor(private http: HttpClient) {}
 

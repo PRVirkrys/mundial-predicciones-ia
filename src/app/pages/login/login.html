@@ -17,5 +17,15 @@
     <input type="password" required placeholder="Contraseña" [(ngModel)]="password" />
   </label>
 
-  <button class="btn btn-neutral mt-4 w-full" (click)="logIn()">Login</button>
+  @if (error) {
+    <div class="alert alert-error mt-3 text-sm py-2">{{ error }}</div>
+  }
+
+  <button class="btn btn-neutral mt-4 w-full" (click)="logIn()" [disabled]="loading">
+    @if (loading) {
+      <span class="loading loading-spinner loading-sm"></span>
+    } @else {
+      Login
+    }
+  </button>
 </fieldset>

@@ -1,4 +1,5 @@
 import { ChangeDetectorRef, Component, DestroyRef, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { MatchCard } from '../../shared/components/match-card/match-card';
 import { MatchService } from '../../core/services/match.service';
 import { PredictionService } from '../../core/services/prediction.service';
@@ -6,16 +7,19 @@ import { Match } from '../../core/models/match.model';
 import { Prediction } from '../../core/models/prediction.model';
 import { Auth } from '../../core/services/auth';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { forkJoin } from 'rxjs';
+import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
   selector: 'app-matches',
-  imports: [MatchCard],
+  imports: [MatchCard, LucideAngularModule, FormsModule],
   templateUrl: './matches.html',
   styleUrl: './matches.css',
 })
 export class Matches implements OnInit {
   matches: Match[] = [];
   predictionByUser: Prediction[] = [];
+  matchesFiltardos: Match[] = [];
 
   constructor(
     private matchService: MatchService,
@@ -26,6 +30,14 @@ export class Matches implements OnInit {
   ) {}
 
   userId: number | null = null;
+  activeTab: 'all' | 'predictions' | 'played' = 'all';
+  sortOrder: 'asc' | 'desc' = 'asc';
+  selectedGroup: string = 'all';
+  searchQuery: string = '';
+
+  get availableGroups(): string[] {
+    return [...new Set(this.matches.map((m) => m.group).filter(Boolean))].sort();
+  }
 
   ngOnInit() {
     this.matchService
@@ -34,6 +46,13 @@ export class Matches implements OnInit {
       .subscribe((data: Match[]) => {
         this.matches = data;
         this.cdr.detectChanges();
+
+        const playedMatches = data.filter((m) => m.homeGoals !== null);
+        if (playedMatches.length > 0) {
+          forkJoin(
+            playedMatches.map((m) => this.predictionService.evaluatePredictions(m.id)),
+          ).subscribe(() => this.auth.refreshCurrentUser());
+        }
       });
 
     this.auth.currentUser$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((user) => {
@@ -58,5 +77,43 @@ export class Matches implements OnInit {
     if (this.userId) {
       this.loadUserPredictions(this.userId);
     }
+  }
+
+  onSearchChange() {
+    this.cdr.detectChanges();
+  }
+
+  clearSearch() {
+    this.searchQuery = '';
+    this.cdr.detectChanges();
+  }
+
+  getMatchesFiltered(): Match[] {
+    let result = this.matches;
+
+    if (this.activeTab === 'predictions') {
+      result = result.filter((match) => this.getPredictionForMatch(match.id) !== null);
+    } else if (this.activeTab === 'played') {
+      result = result.filter((match) => match.homeGoals !== null && match.awayGoals !== null);
+    }
+
+    if (this.selectedGroup !== 'all') {
+      result = result.filter((match) => match.group === this.selectedGroup);
+    }
+
+    if (this.searchQuery.trim()) {
+      const q = this.searchQuery.toLowerCase().trim();
+      result = result.filter(
+        (match) =>
+          match.homeTeam?.toLowerCase().includes(q) ||
+          match.awayTeam?.toLowerCase().includes(q) ||
+          match.group?.toLowerCase().includes(q),
+      );
+    }
+
+    return result.slice().sort((a, b) => {
+      const diff = new Date(a.matchDate).getTime() - new Date(b.matchDate).getTime();
+      return this.sortOrder === 'asc' ? diff : -diff;
+    });
   }
 }

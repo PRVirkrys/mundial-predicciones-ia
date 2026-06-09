@@ -3,11 +3,13 @@ import { MainLayout } from './layout/main-layout/main-layout';
 import { Matches } from './pages/matches/matches';
 import { Login } from './pages/login/login';
 import { AuthLayout } from './layout/auth-layout/auth-layout';
+import { authGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
   {
     path: '',
     component: MainLayout,
+    canActivate: [authGuard],
     children: [
       {
         path: '',

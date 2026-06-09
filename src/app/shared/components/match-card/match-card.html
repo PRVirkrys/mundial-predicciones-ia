@@ -2,20 +2,41 @@
   <div class="card-body p-4">
     <div class="flex items-center justify-between gap-4 space-y-2 w-full">
       <div class="space-y-2 w-full">
-        <h3 class="text-sm font-semibold text-base-content">
-          {{ match.homeTeam }} <span class="opacity-60">vs</span> {{ match.awayTeam }}
-        </h3>
+        <!-- Group -->
+        <span class="badge badge-soft badge-primary badge-sm">{{ match.group }}</span>
 
-        <div class="flex items-center gap-1.5 text-xs text-base-content/60">
-          <lucide-icon name="calendar" size="12" color="currentColor"></lucide-icon>
+        <!-- Teams with flags -->
+        <div class="flex items-center justify-between gap-2">
+          <div class="flex items-center gap-2 flex-1 min-w-0">
+            @if (match.homeTeamFlag) {
+              <span class="text-lg leading-none shrink-0">{{ match.homeTeamFlag }}</span>
+            }
+            <span class="text-sm font-semibold text-base-content truncate">{{
+              match.homeTeam
+            }}</span>
+          </div>
+          <span class="text-xs font-bold text-base-content/40 shrink-0">vs</span>
+          <div class="flex items-center gap-2 flex-1 min-w-0 justify-end">
+            <span class="text-sm font-semibold text-base-content truncate text-right">{{
+              match.awayTeam
+            }}</span>
+            @if (match.awayTeamFlag) {
+              <span class="text-lg leading-none shrink-0">{{ match.awayTeamFlag }}</span>
+            }
+          </div>
+        </div>
 
-          <span>{{ match.matchDate | date: 'dd MMM · HH:mm' }} · {{ match.location }}</span>
+        <div class="flex items-center gap-2 flex-wrap">
+          <div class="flex items-center gap-1.5 text-xs text-base-content/60">
+            <lucide-icon name="calendar" size="12" color="currentColor"></lucide-icon>
+            <span>{{ match.matchDate | date: 'dd MMM · HH:mm' }} · {{ match.location }}</span>
+          </div>
         </div>
 
         <!--Card foooter-->
         <div class="flex w-full items-center justify-between gap-2 w-full flex-wrap">
           <!-- Badges -->
-          <div class="flex flex-wrap items-center justify-between min-h-10">
+          <div class="flex flex-wrap items-center justify-between min-h-10 gap-4">
             @if (!isPlayed) {
               @if (!isPredicted) {
                 <span class="badge badge-soft badge-warning badge-sm"> Pendiente de predecir </span>
@@ -42,7 +63,10 @@
                 @if (isPredictionCorrect) {
                   <span class="badge badge-soft badge-success badge-sm"> Acertado </span>
                 } @else {
-                  <span class="badge badge-soft badge-error badge-sm"> Fallado </span>
+                  <span class="badge badge-soft badge-error badge-sm">
+                    Fallado {{ prediction?.predictedHomeGoals }} -
+                    {{ prediction?.predictedAwayGoals }}
+                  </span>
                 }
               } @else {
                 <span class="badge badge-ghost badge-sm"> Sin prediccion </span>

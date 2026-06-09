@@ -56,7 +56,8 @@ export class PredictionForm {
           },
         });
     } else {
-      const user: User = this.auth.getCurrentUser();
+      const user: User | null = this.auth.getCurrentUser();
+      if (!user) return;
       this.predictionService
         .createPrediction(user.id, this.match.id, this.userHomeGoals, this.userAwayGoals)
         .subscribe({

@@ -17,16 +17,11 @@ export class Auth {
   currentUser$ = this.currentUser.asObservable();
 
   onLogin(name: string, password: string) {
-    this.userService.login(name, password).subscribe({
-      next: (user) => {
-        localStorage.setItem('user', JSON.stringify(user));
-        this.currentUser.next(user);
-        this.router.navigate(['/matches']);
-      },
-      error: () => {
-        console.log('NO existe el usaurio');
-      },
-    });
+    return this.userService.login(name, password);
+  }
+
+  setCurrentUser(user: User) {
+    this.currentUser.next(user);
   }
 
   logOut() {
@@ -45,6 +40,7 @@ export class Auth {
 
   refreshCurrentUser() {
     const id = this.getCurrentUserId();
+    if (!id) return;
     this.userService.getUserById(id).subscribe((user) => {
       localStorage.setItem('user', JSON.stringify(user));
       this.currentUser.next(user);
