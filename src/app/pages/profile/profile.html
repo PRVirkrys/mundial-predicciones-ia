@@ -16,15 +16,17 @@
   <div class="stats stats-vertical sm:stats-horizontal w-full shadow border border-base-200">
     <div class="stat place-items-center">
       <div class="stat-title text-xs">Predicciones</div>
-      <div class="stat-value text-2xl">12</div>
+      <div class="stat-value text-2xl">{{ predictionByUser.length }}</div>
     </div>
     <div class="stat place-items-center">
-      <div class="stat-title text-xs">Acertadas</div>
-      <div class="stat-value text-2xl text-success">7</div>
+      <div class="stat-title text-xs">Acertadas exactas</div>
+      <div class="stat-value text-2xl text-success">{{ predictionsByUserAcertedExact.length }}</div>
     </div>
     <div class="stat place-items-center">
-      <div class="stat-title text-xs">Exactas</div>
-      <div class="stat-value text-2xl text-warning">3</div>
+      <div class="stat-title text-xs">Solo ganador</div>
+      <div class="stat-value text-2xl text-warning">
+        {{ predictionAcertedByUserOnlyWinnerTeam.length }}
+      </div>
     </div>
   </div>
 
