@@ -7,6 +7,7 @@ import { FormsModule } from '@angular/forms';
 import { PredictionService } from '../../../core/services/prediction.service';
 import { Auth } from '../../../core/services/auth';
 import { User } from '../../../core/models/user.model';
+import { getTeamName } from '../../../utils/team-names';
 
 @Component({
   selector: 'app-prediction-form',
@@ -71,5 +72,9 @@ export class PredictionForm {
           },
         });
     }
+  }
+
+  teamName(name: string): string {
+    return getTeamName(name);
   }
 }

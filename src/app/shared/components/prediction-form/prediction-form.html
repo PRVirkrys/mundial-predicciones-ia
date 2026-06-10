@@ -19,7 +19,8 @@
       <!-- Match info -->
       <section class="text-center">
         <h3 class="text-lg font-bold">
-          {{ match.homeTeam }} <span class="opacity-70">vs</span> {{ match.awayTeam }}
+          {{ teamName(match.homeTeam) }} <span class="opacity-70">vs</span>
+          {{ teamName(match.awayTeam) }}
         </h3>
 
         <p class="mt-1 text-sm font-medium text-base-content/60">
@@ -35,7 +36,9 @@
           <div class="mt-2 grid w-full grid-cols-[1fr_auto_1fr] items-end gap-5">
             <!-- España -->
             <label class="flex flex-col items-center gap-2">
-              <span class="text-xs font-semibold text-base-content/60"> {{ match.homeTeam }} </span>
+              <span class="text-xs font-semibold text-base-content/60">
+                {{ teamName(match.homeTeam) }}
+              </span>
 
               <input
                 type="number"
