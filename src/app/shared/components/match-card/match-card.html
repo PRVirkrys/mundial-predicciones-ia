@@ -29,7 +29,9 @@
         <div class="flex items-center gap-2 flex-wrap">
           <div class="flex items-center gap-1.5 text-xs text-base-content/60">
             <lucide-icon name="calendar" size="12" color="currentColor"></lucide-icon>
-            <span>{{ match.matchDate | date: 'dd MMM · HH:mm' }} · {{ match.location }}</span>
+            <span
+              >{{ match.matchDate | date: 'dd MMM · HH:mm' : '+0200' }}· {{ match.location }}</span
+            >
           </div>
         </div>
 

@@ -61,6 +61,10 @@ export class Matches implements OnInit {
       if (user) this.loadUserPredictions(user.id);
       else this.predictionByUser = [];
     });
+
+    this.matchService.getMatches().subscribe((data) => {
+      console.log(data[0]?.matchDate);
+    });
   }
 
   loadUserPredictions(userId: number) {
