@@ -70,11 +70,13 @@
     <!-- Lista completa -->
     <div class="flex flex-col gap-2">
       @for (user of users; track user.id; let i = $index) {
-        <app-user-card
-          [user]="user"
-          [position]="i + 1"
-          [isCurrentUser]="user.id === currentUserId"
-        ></app-user-card>
+        <div class="cursor-pointer" (click)="navigateToPlayer(user.id)">
+          <app-user-card
+            [user]="user"
+            [position]="i + 1"
+            [isCurrentUser]="user.id === currentUserId"
+          ></app-user-card>
+        </div>
       }
     </div>
 

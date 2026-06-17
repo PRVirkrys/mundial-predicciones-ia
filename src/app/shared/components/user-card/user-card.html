@@ -1,21 +1,20 @@
 <div
-  class="flex items-center gap-3 p-3 rounded-xl border transition-colors"
-  [class]="isCurrentUser
+  [class]="'flex items-center gap-3 p-3 rounded-xl border transition-colors ' + (isCurrentUser
     ? 'bg-primary/10 border-primary/30'
-    : 'bg-base-100 border-base-200 hover:bg-base-200'"
+    : 'bg-base-100 border-base-200 hover:bg-base-200')"
 >
 
-  <span class="font-bold w-6 text-center text-sm"
-    [class]="position === 1 ? 'text-warning' : 'text-base-content/40'"
+  <span
+    [class]="'font-bold w-6 text-center text-sm ' + (position === 1 ? 'text-warning' : 'text-base-content/40')"
   >#{{ position }}</span>
 
   <div class="avatar avatar-placeholder">
-    <div class="w-10 rounded-full font-bold text-sm"
-      [class]="isCurrentUser
+    <div
+      [class]="'w-10 rounded-full font-bold text-sm ' + (isCurrentUser
         ? 'bg-primary text-primary-content'
         : position === 1
           ? 'bg-warning text-warning-content'
-          : 'bg-base-300 text-base-content'"
+          : 'bg-base-300 text-base-content')"
     >
       {{ initials }}
     </div>
@@ -31,12 +30,12 @@
     <p class="text-xs text-base-content/50">{{ user.totalScore }} puntos</p>
   </div>
 
-  <div class="badge badge-sm font-bold"
-    [class]="position === 1
+  <div
+    [class]="'badge badge-sm font-bold ' + (position === 1
       ? 'badge-warning'
       : isCurrentUser
         ? 'badge-primary'
-        : 'badge-ghost'"
+        : 'badge-ghost')"
   >{{ user.totalScore }} pts</div>
 
 </div>

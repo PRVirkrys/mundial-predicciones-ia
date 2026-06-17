@@ -27,6 +27,12 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/profile/profile').then((m) => m.Profile),
         title: 'Profile',
       },
+      {
+        path: 'players/:id',
+        loadComponent: () =>
+          import('./pages/player-profile/player-profile').then((m) => m.PlayerProfile),
+        title: 'Jugador',
+      },
     ],
   },
   {

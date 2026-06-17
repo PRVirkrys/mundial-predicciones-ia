@@ -1,0 +1,68 @@
+<div class="max-w-2xl mx-auto flex flex-col gap-6">
+
+  <!-- Back -->
+  <button class="btn btn-ghost btn-sm self-start gap-1 -ml-2" (click)="goBack()">
+    <lucide-icon name="arrow-left" size="16" color="currentColor"></lucide-icon>
+    Volver al ranking
+  </button>
+
+  @if (loading) {
+    <div class="flex justify-center py-16">
+      <span class="loading loading-spinner loading-md text-primary"></span>
+    </div>
+  } @else if (user) {
+
+    <!-- Cabecera -->
+    <div class="card bg-base-200 shadow-sm">
+      <div class="card-body items-center text-center p-6">
+        <div class="avatar avatar-placeholder mb-2">
+          <div class="bg-primary text-primary-content w-20 rounded-full">
+            <span class="text-2xl font-bold">{{ initials }}</span>
+          </div>
+        </div>
+        <h2 class="text-xl font-bold">{{ user.name }}</h2>
+        <div class="badge badge-primary badge-lg mt-1">{{ user.totalScore }} Puntos</div>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats stats-vertical sm:stats-horizontal w-full shadow border border-base-200">
+      <div class="stat place-items-center">
+        <div class="stat-title text-xs">Predicciones</div>
+        <div class="stat-value text-2xl">{{ predictions.length }}</div>
+      </div>
+      <div class="stat place-items-center">
+        <div class="stat-title text-xs">Acertadas exactas</div>
+        <div class="stat-value text-2xl text-success">{{ exactPredictions.length }}</div>
+      </div>
+      <div class="stat place-items-center">
+        <div class="stat-title text-xs">Solo ganador</div>
+        <div class="stat-value text-2xl text-warning">{{ winnerOnlyPredictions.length }}</div>
+      </div>
+    </div>
+
+    <!-- Predicciones -->
+    <div>
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="text-base font-bold">Predicciones de {{ user.name }}</h3>
+        @if (hasMore) {
+          <button class="btn btn-ghost btn-sm text-primary" (click)="showAll = !showAll">
+            {{ showAll ? 'Ver menos' : 'Ver todas' }}
+          </button>
+        }
+      </div>
+
+      @if (predictions.length === 0) {
+        <p class="text-sm text-base-content/50 text-center py-6">
+          Este jugador aún no tiene predicciones
+        </p>
+      } @else {
+        <app-predictions-list [predictions]="predictions" [limit]="displayLimit"></app-predictions-list>
+      }
+    </div>
+
+  } @else {
+    <p class="text-center text-base-content/50 py-12">Jugador no encontrado</p>
+  }
+
+</div>
