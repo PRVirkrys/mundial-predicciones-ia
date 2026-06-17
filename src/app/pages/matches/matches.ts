@@ -1,5 +1,6 @@
 import { ChangeDetectorRef, Component, DestroyRef, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { getTeamName } from '../../utils/team-names';
 import { MatchCard } from '../../shared/components/match-card/match-card';
 import { MatchService } from '../../core/services/match.service';
@@ -28,6 +29,7 @@ export class Matches implements OnInit {
     private cdr: ChangeDetectorRef,
     private auth: Auth,
     private destroyRef: DestroyRef,
+    private route: ActivatedRoute,
   ) {}
 
   userId: number | null = null;
@@ -41,6 +43,11 @@ export class Matches implements OnInit {
   }
 
   ngOnInit() {
+    const tab = this.route.snapshot.queryParamMap.get('tab');
+    if (tab === 'predictions' || tab === 'played') {
+      this.activeTab = tab;
+    }
+
     this.matchService
       .getMatches()
       .pipe(takeUntilDestroyed(this.destroyRef))

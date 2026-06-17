@@ -32,7 +32,14 @@
 
   <!-- Lista predicciones -->
   <div>
-    <h3 class="text-base font-bold mb-3">Mis predicciones</h3>
-    <app-predictions-list></app-predictions-list>
+    <div class="flex items-center justify-between mb-3">
+      <h3 class="text-base font-bold">Mis predicciones</h3>
+      @if (showViewAll) {
+        <button class="btn btn-ghost btn-sm text-primary" (click)="goToAllPredictions()">
+          Ver todas
+        </button>
+      }
+    </div>
+    <app-predictions-list [predictions]="predictionByUser" [limit]="4"></app-predictions-list>
   </div>
 </div>

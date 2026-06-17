@@ -1,67 +1,42 @@
 <div class="flex flex-col gap-3">
 
-  <!-- Predicción acertada exacta -->
-  <div class="card bg-base-100 border border-base-200 shadow-sm">
-    <div class="card-body p-4">
-      <div class="flex items-start justify-between gap-2 flex-wrap">
-        <div>
-          <p class="text-sm font-semibold">España <span class="opacity-50">vs</span> Brasil</p>
-          <p class="text-xs text-base-content/50 mt-0.5">14 Jun · 21:00 · Madrid</p>
-        </div>
-        <div class="flex items-center gap-2 flex-wrap">
-          <span class="badge badge-soft badge-info badge-sm">Tu predicción: 2 - 1</span>
-          <span class="badge badge-soft badge-success badge-sm">Exacto ✓</span>
-        </div>
-      </div>
+  @if (displayedPredictions.length === 0) {
+    <div class="text-center text-base-content/50 text-sm py-6">
+      Aún no tienes predicciones
     </div>
-  </div>
+  }
 
-  <!-- Predicción ganador correcto -->
-  <div class="card bg-base-100 border border-base-200 shadow-sm">
-    <div class="card-body p-4">
-      <div class="flex items-start justify-between gap-2 flex-wrap">
-        <div>
-          <p class="text-sm font-semibold">Argentina <span class="opacity-50">vs</span> Francia</p>
-          <p class="text-xs text-base-content/50 mt-0.5">18 Jun · 18:00 · Buenos Aires</p>
-        </div>
-        <div class="flex items-center gap-2 flex-wrap">
-          <span class="badge badge-soft badge-info badge-sm">Tu predicción: 1 - 0</span>
-          <span class="badge badge-soft badge-warning badge-sm">Ganador ✓</span>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Predicción fallada -->
-  <div class="card bg-base-100 border border-base-200 shadow-sm">
-    <div class="card-body p-4">
-      <div class="flex items-start justify-between gap-2 flex-wrap">
-        <div>
-          <p class="text-sm font-semibold">Portugal <span class="opacity-50">vs</span> Alemania</p>
-          <p class="text-xs text-base-content/50 mt-0.5">22 Jun · 15:00 · Lisboa</p>
-        </div>
-        <div class="flex items-center gap-2 flex-wrap">
-          <span class="badge badge-soft badge-info badge-sm">Tu predicción: 3 - 0</span>
-          <span class="badge badge-soft badge-error badge-sm">Fallado ✗</span>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Predicción pendiente de resultado -->
-  <div class="card bg-base-100 border border-base-200 shadow-sm">
-    <div class="card-body p-4">
-      <div class="flex items-start justify-between gap-2 flex-wrap">
-        <div>
-          <p class="text-sm font-semibold">México <span class="opacity-50">vs</span> Uruguay</p>
-          <p class="text-xs text-base-content/50 mt-0.5">25 Jun · 20:00 · Ciudad de México</p>
-        </div>
-        <div class="flex items-center gap-2 flex-wrap">
-          <span class="badge badge-soft badge-info badge-sm">Tu predicción: 1 - 2</span>
-          <span class="badge badge-soft badge-neutral badge-sm">Pendiente</span>
+  @for (p of displayedPredictions; track p.id) {
+    <div class="card bg-base-100 border border-base-200 shadow-sm">
+      <div class="card-body p-4">
+        <div class="flex items-start justify-between gap-2 flex-wrap">
+          <div>
+            <p class="text-sm font-semibold">
+              {{ teamName(p.match.homeTeam) }}
+              <span class="opacity-50">vs</span>
+              {{ teamName(p.match.awayTeam) }}
+            </p>
+            <p class="text-xs text-base-content/50 mt-0.5">
+              {{ p.match.matchDate | date: 'd MMM · HH:mm' : 'Europe/Madrid' : 'es' }}
+              · {{ p.match.location }}
+            </p>
+          </div>
+          <div class="flex items-center gap-2 flex-wrap">
+            <span class="badge badge-soft badge-info badge-sm">
+              Tu predicción: {{ p.predictedHomeGoals }} - {{ p.predictedAwayGoals }}
+            </span>
+            @if (p.match.homeGoals !== null) {
+              <span class="badge badge-soft badge-ghost badge-sm">
+                Resultado: {{ p.match.homeGoals }} - {{ p.match.awayGoals }}
+              </span>
+            }
+            <span [class]="getBadgeClass(p)">
+              {{ getBadgeLabel(p) }}
+            </span>
+          </div>
         </div>
       </div>
     </div>
-  </div>
+  }
 
 </div>
