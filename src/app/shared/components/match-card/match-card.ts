@@ -29,6 +29,18 @@ export class MatchCard {
     return this.prediction?.correctWinner === true;
   }
 
+  get isExact(): boolean {
+    return this.prediction?.correctWinner === true && this.prediction?.correctScore === true;
+  }
+
+  get isWinnerOnly(): boolean {
+    return this.prediction?.correctWinner === true && this.prediction?.correctScore === false;
+  }
+
+  get isFailed(): boolean {
+    return this.prediction?.correctWinner === false;
+  }
+
   teamName(name: string): string {
     return getTeamName(name);
   }

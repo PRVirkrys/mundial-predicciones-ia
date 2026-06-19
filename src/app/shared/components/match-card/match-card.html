@@ -38,40 +38,35 @@
         <!--Card foooter-->
         <div class="flex w-full items-center justify-between gap-2 w-full flex-wrap">
           <!-- Badges -->
-          <div class="flex flex-wrap items-center justify-between min-h-10 gap-4">
+          <div class="flex flex-wrap items-center gap-2 min-h-10">
             @if (!isPlayed) {
               @if (!isPredicted) {
                 <span class="badge badge-soft badge-warning badge-sm"> Pendiente de predecir </span>
-              } @else if (isPredicted) {
+              } @else {
                 <span class="badge badge-soft badge-info badge-sm">
-                  Tu prediccion:
-                  <span>{{ prediction?.predictedHomeGoals }}</span>
-                  <span>-</span>
-                  <span>{{ prediction?.predictedAwayGoals }}</span>
+                  Tu predicción: {{ prediction?.predictedHomeGoals }} - {{ prediction?.predictedAwayGoals }}
                 </span>
               }
-            } @else if (isPlayed) {
-              <span
-                class="badge badge-soft badge-sm"
-                [ngClass]="isPredictionCorrect ? 'badge-success' : 'badge-neutral'"
-              >
-                Jugado:
-                <span>{{ match.homeGoals }}</span>
-                <span>-</span>
-                <span>{{ match.awayGoals }}</span>
+            } @else {
+              <span class="badge badge-soft badge-ghost badge-sm">
+                Resultado: {{ match.homeGoals }} - {{ match.awayGoals }}
               </span>
 
               @if (isPredicted) {
-                @if (isPredictionCorrect) {
-                  <span class="badge badge-soft badge-success badge-sm"> Acertado </span>
+                <span class="badge badge-soft badge-info badge-sm">
+                  Tu predicción: {{ prediction?.predictedHomeGoals }} - {{ prediction?.predictedAwayGoals }}
+                </span>
+                @if (isExact) {
+                  <span class="badge badge-soft badge-success badge-sm">Exacto ✓</span>
+                } @else if (isWinnerOnly) {
+                  <span class="badge badge-soft badge-warning badge-sm">Ganador ✓</span>
+                } @else if (isFailed) {
+                  <span class="badge badge-soft badge-error badge-sm">Fallado ✗</span>
                 } @else {
-                  <span class="badge badge-soft badge-error badge-sm">
-                    Fallado {{ prediction?.predictedHomeGoals }} -
-                    {{ prediction?.predictedAwayGoals }}
-                  </span>
+                  <span class="badge badge-soft badge-neutral badge-sm">Pendiente</span>
                 }
               } @else {
-                <span class="badge badge-ghost badge-sm"> Sin prediccion </span>
+                <span class="badge badge-ghost badge-sm">Sin predicción</span>
               }
             }
           </div>
