@@ -135,22 +135,43 @@
           No hay predicciones que coincidan con los filtros
         </p>
       } @else if (isSegmentedView) {
-        <app-predictions-list
-          [predictions]="filteredUpcomingPredictions"
-          sortOrder="closest"
-        ></app-predictions-list>
-        @if (filteredPlayedPredictions.length > 0) {
-          <div class="divider mt-6 mb-2 text-sm font-semibold text-base-content/50">Jugados</div>
+        @if (selectedPhase === 'all') {
+          @for (section of sectionedUpcoming; track section.label) {
+            <div class="divider mt-4 mb-2 text-sm font-semibold text-base-content/50">{{ section.label }}</div>
+            <app-predictions-list [predictions]="section.predictions" sortOrder="asc"></app-predictions-list>
+          }
+        } @else {
           <app-predictions-list
-            [predictions]="filteredPlayedPredictions"
-            sortOrder="desc"
+            [predictions]="filteredUpcomingPredictions"
+            sortOrder="closest"
           ></app-predictions-list>
         }
+        @if (filteredPlayedPredictions.length > 0) {
+          <div class="divider mt-6 mb-4 text-sm font-semibold text-base-content/50">Jugados</div>
+          @if (selectedPhase === 'all') {
+            @for (section of sectionedPlayed; track section.label) {
+              <div class="divider mt-4 mb-2 text-sm font-semibold text-base-content/50">{{ section.label }}</div>
+              <app-predictions-list [predictions]="section.predictions" sortOrder="desc"></app-predictions-list>
+            }
+          } @else {
+            <app-predictions-list
+              [predictions]="filteredPlayedPredictions"
+              sortOrder="desc"
+            ></app-predictions-list>
+          }
+        }
       } @else {
-        <app-predictions-list
-          [predictions]="filteredPredictions"
-          [sortOrder]="sortOrder"
-        ></app-predictions-list>
+        @if (selectedPhase === 'all') {
+          @for (section of sectionedAll; track section.label) {
+            <div class="divider mt-4 mb-2 text-sm font-semibold text-base-content/50">{{ section.label }}</div>
+            <app-predictions-list [predictions]="section.predictions" [sortOrder]="sortOrder"></app-predictions-list>
+          }
+        } @else {
+          <app-predictions-list
+            [predictions]="filteredPredictions"
+            [sortOrder]="sortOrder"
+          ></app-predictions-list>
+        }
       }
     </div>
   } @else {

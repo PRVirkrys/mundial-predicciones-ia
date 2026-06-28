@@ -46,6 +46,7 @@ export class Matches implements OnInit {
     { key: 'round16', label: 'Octavos',          test: (r: string) => r === 'Round of 16' },
     { key: 'qf',      label: 'Cuartos',          test: (r: string) => r === 'Quarter-final' },
     { key: 'sf',      label: 'Semifinal',         test: (r: string) => r === 'Semi-final' },
+    { key: 'third',   label: 'Tercer puesto',     test: (r: string) => r === 'Match for third place' },
     { key: 'final',   label: 'Final',             test: (r: string) => r === 'Final' },
   ];
 
@@ -197,5 +198,60 @@ export class Matches implements OnInit {
     return this.getFilteredBase()
       .filter((m) => m.homeGoals !== null && m.awayGoals !== null)
       .sort((a, b) => new Date(b.matchDate).getTime() - new Date(a.matchDate).getTime());
+  }
+
+  private readonly roundLabel: Record<string, string> = {
+    'Round of 32':   'Dieciseisavos',
+    'Round of 16':   'Octavos',
+    'Quarter-final': 'Cuartos de final',
+    'Semi-final':             'Semifinal',
+    'Match for third place':  'Tercer puesto',
+    'Final':                  'Final',
+  };
+
+  private buildSections(matches: Match[], reverse = false): { label: string; matches: Match[] }[] {
+    type Sec = { label: string; phaseKey: string; group: string | null; items: Match[] };
+    const map = new Map<string, Sec>();
+    const phaseOrder = ['group', 'round32', 'round16', 'qf', 'sf', 'third', 'final'];
+
+    for (const m of matches) {
+      const phaseKey = this.phases.find((p) => p.test(m.round))?.key ?? 'unknown';
+      const key = m.group ? `g_${m.group}` : phaseKey;
+      const label = m.group ?? this.roundLabel[m.round] ?? m.round;
+      if (!map.has(key)) map.set(key, { label, phaseKey, group: m.group ?? null, items: [] });
+      map.get(key)!.items.push(m);
+    }
+
+    return [...map.values()]
+      .sort((a, b) => {
+        const oi = phaseOrder.indexOf(a.phaseKey);
+        const oj = phaseOrder.indexOf(b.phaseKey);
+        if (oi !== oj) return oi - oj;
+        return (a.group ?? '').localeCompare(b.group ?? '');
+      })
+      .map((s) => ({
+        label: s.label,
+        matches: s.items.sort((a, b) => {
+          const d = new Date(a.matchDate).getTime() - new Date(b.matchDate).getTime();
+          return reverse ? -d : d;
+        }),
+      }));
+  }
+
+  get sectionedAll(): { label: string; matches: Match[] }[] {
+    return this.buildSections(this.getFilteredBase(), this.sortOrder === 'desc');
+  }
+
+  get sectionedUpcoming(): { label: string; matches: Match[] }[] {
+    return this.buildSections(
+      this.getFilteredBase().filter((m) => m.homeGoals === null || m.awayGoals === null),
+    );
+  }
+
+  get sectionedPlayed(): { label: string; matches: Match[] }[] {
+    return this.buildSections(
+      this.getFilteredBase().filter((m) => m.homeGoals !== null && m.awayGoals !== null),
+      true,
+    );
   }
 }

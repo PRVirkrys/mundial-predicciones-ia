@@ -47,8 +47,9 @@ export class MatchCard {
       'Round of 32':  'Dieciseisavos',
       'Round of 16':  'Octavos',
       'Quarter-final': 'Cuartos de final',
-      'Semi-final':   'Semifinal',
-      'Final':        'Final',
+      'Semi-final':            'Semifinal',
+      'Match for third place': 'Tercer puesto',
+      'Final':                 'Final',
     };
     return labels[this.match.round] ?? this.match.round;
   }

@@ -36,6 +36,7 @@ export class PlayerProfile implements OnInit {
     { key: 'round16', label: 'Octavos',          test: (r: string) => r === 'Round of 16' },
     { key: 'qf',      label: 'Cuartos',          test: (r: string) => r === 'Quarter-final' },
     { key: 'sf',      label: 'Semifinal',         test: (r: string) => r === 'Semi-final' },
+    { key: 'third',   label: 'Tercer puesto',     test: (r: string) => r === 'Match for third place' },
     { key: 'final',   label: 'Final',             test: (r: string) => r === 'Final' },
   ];
 
@@ -106,6 +107,54 @@ export class PlayerProfile implements OnInit {
     return this.filteredBase
       .filter((p) => p.match.homeGoals !== null && p.match.awayGoals !== null)
       .sort((a, b) => new Date(b.match.matchDate).getTime() - new Date(a.match.matchDate).getTime());
+  }
+
+  private readonly roundLabel: Record<string, string> = {
+    'Round of 32':   'Dieciseisavos',
+    'Round of 16':   'Octavos',
+    'Quarter-final': 'Cuartos de final',
+    'Semi-final':             'Semifinal',
+    'Match for third place':  'Tercer puesto',
+    'Final':                  'Final',
+  };
+
+  private buildSections(predictions: Prediction[]): { label: string; predictions: Prediction[] }[] {
+    type Sec = { label: string; phaseKey: string; group: string | null; items: Prediction[] };
+    const map = new Map<string, Sec>();
+    const phaseOrder = ['group', 'round32', 'round16', 'qf', 'sf', 'third', 'final'];
+
+    for (const p of predictions) {
+      const phaseKey = this.phases.find((ph) => ph.test(p.match.round))?.key ?? 'unknown';
+      const key = p.match.group ? `g_${p.match.group}` : phaseKey;
+      const label = p.match.group ?? this.roundLabel[p.match.round] ?? p.match.round;
+      if (!map.has(key)) map.set(key, { label, phaseKey, group: p.match.group ?? null, items: [] });
+      map.get(key)!.items.push(p);
+    }
+
+    return [...map.values()]
+      .sort((a, b) => {
+        const oi = phaseOrder.indexOf(a.phaseKey);
+        const oj = phaseOrder.indexOf(b.phaseKey);
+        if (oi !== oj) return oi - oj;
+        return (a.group ?? '').localeCompare(b.group ?? '');
+      })
+      .map((s) => ({ label: s.label, predictions: s.items }));
+  }
+
+  get sectionedAll(): { label: string; predictions: Prediction[] }[] {
+    return this.buildSections(this.filteredBase);
+  }
+
+  get sectionedUpcoming(): { label: string; predictions: Prediction[] }[] {
+    return this.buildSections(
+      this.filteredBase.filter((p) => p.match.homeGoals === null || p.match.awayGoals === null),
+    );
+  }
+
+  get sectionedPlayed(): { label: string; predictions: Prediction[] }[] {
+    return this.buildSections(
+      this.filteredBase.filter((p) => p.match.homeGoals !== null && p.match.awayGoals !== null),
+    );
   }
 
   clearSearch() {

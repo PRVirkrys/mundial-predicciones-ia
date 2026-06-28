@@ -131,19 +131,22 @@
 
   <!-- Contenido -->
   @if (isSegmentedView) {
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-      @for (match of getUpcomingFiltered(); track match.id) {
-        <app-match-card
-          [match]="match"
-          [prediction]="getPredictionForMatch(match.id)"
-          (predictionSaved)="predictionSaved()"
-        ></app-match-card>
+    @if (selectedPhase === 'all') {
+      @for (section of sectionedUpcoming; track section.label) {
+        <div class="divider mt-4 mb-2 text-sm font-semibold text-base-content/50">{{ section.label }}</div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
+          @for (match of section.matches; track match.id) {
+            <app-match-card
+              [match]="match"
+              [prediction]="getPredictionForMatch(match.id)"
+              (predictionSaved)="predictionSaved()"
+            ></app-match-card>
+          }
+        </div>
       }
-    </div>
-    @if (getPlayedFiltered().length > 0) {
-      <div class="divider mt-6 mb-2 text-sm font-semibold text-base-content/50">Jugados</div>
+    } @else {
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        @for (match of getPlayedFiltered(); track match.id) {
+        @for (match of getUpcomingFiltered(); track match.id) {
           <app-match-card
             [match]="match"
             [prediction]="getPredictionForMatch(match.id)"
@@ -152,15 +155,57 @@
         }
       </div>
     }
-  } @else {
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-      @for (match of getMatchesFiltered(); track match.id) {
-        <app-match-card
-          [match]="match"
-          [prediction]="getPredictionForMatch(match.id)"
-          (predictionSaved)="predictionSaved()"
-        ></app-match-card>
+    @if (getPlayedFiltered().length > 0) {
+      <div class="divider mt-6 mb-4 text-sm font-semibold text-base-content/50">Jugados</div>
+      @if (selectedPhase === 'all') {
+        @for (section of sectionedPlayed; track section.label) {
+          <div class="divider mt-4 mb-2 text-sm font-semibold text-base-content/50">{{ section.label }}</div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
+            @for (match of section.matches; track match.id) {
+              <app-match-card
+                [match]="match"
+                [prediction]="getPredictionForMatch(match.id)"
+                (predictionSaved)="predictionSaved()"
+              ></app-match-card>
+            }
+          </div>
+        }
+      } @else {
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          @for (match of getPlayedFiltered(); track match.id) {
+            <app-match-card
+              [match]="match"
+              [prediction]="getPredictionForMatch(match.id)"
+              (predictionSaved)="predictionSaved()"
+            ></app-match-card>
+          }
+        </div>
       }
-    </div>
+    }
+  } @else {
+    @if (selectedPhase === 'all') {
+      @for (section of sectionedAll; track section.label) {
+        <div class="divider mt-4 mb-2 text-sm font-semibold text-base-content/50">{{ section.label }}</div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
+          @for (match of section.matches; track match.id) {
+            <app-match-card
+              [match]="match"
+              [prediction]="getPredictionForMatch(match.id)"
+              (predictionSaved)="predictionSaved()"
+            ></app-match-card>
+          }
+        </div>
+      }
+    } @else {
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        @for (match of getMatchesFiltered(); track match.id) {
+          <app-match-card
+            [match]="match"
+            [prediction]="getPredictionForMatch(match.id)"
+            (predictionSaved)="predictionSaved()"
+          ></app-match-card>
+        }
+      </div>
+    }
   }
 </div>
