@@ -44,26 +44,29 @@
       >
     </div>
 
-    <!-- Filtros en una sola línea -->
-    <div class="flex items-center gap-2">
-      <select class="select select-sm select-bordered flex-1 sm:flex-none sm:w-44" [(ngModel)]="selectedGroup">
-        <option value="all">Todos los grupos</option>
-        @for (group of availableGroups; track group) {
-          <option [value]="group">{{ group }}</option>
+    <!-- Filtros -->
+    <div class="flex flex-wrap items-center gap-2">
+      <select class="select select-sm select-bordered flex-1 sm:flex-none sm:w-44" [(ngModel)]="selectedPhase">
+        <option value="all">Todas las fases</option>
+        @for (phase of availablePhases; track phase.key) {
+          <option [value]="phase.key">{{ phase.label }}</option>
         }
       </select>
 
-      <button
-        class="btn btn-ghost btn-sm gap-1.5 ml-auto sm:ml-0"
-        (click)="sortOrder = sortOrder === 'asc' ? 'desc' : 'asc'"
-      >
-        <lucide-icon
-          [name]="sortOrder === 'asc' ? 'arrow-up' : 'arrow-down'"
-          size="14"
-          color="currentColor"
-        ></lucide-icon>
-        {{ sortOrder === 'asc' ? 'Más próximos' : 'Más lejanos' }}
-      </button>
+      @if (isGroupPhase) {
+        <select class="select select-sm select-bordered flex-1 sm:flex-none sm:w-44" [(ngModel)]="selectedGroup">
+          <option value="all">Todos los grupos</option>
+          @for (group of availableGroups; track group) {
+            <option [value]="group">{{ group }}</option>
+          }
+        </select>
+      }
+
+      <select class="select select-sm select-bordered ml-auto sm:ml-0 sm:w-52" [(ngModel)]="sortOrder">
+        <option value="asc">Más próximos primero</option>
+        <option value="desc">Más lejanos primero</option>
+        <option value="closest">Más cercanos a hoy</option>
+      </select>
     </div>
   </div>
 

@@ -1,4 +1,4 @@
-import { DatePipe, NgClass } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { LucideAngularModule } from 'lucide-angular';
 import { PredictionForm } from '../prediction-form/prediction-form';
@@ -8,7 +8,7 @@ import { getTeamName } from '../../../utils/team-names';
 
 @Component({
   selector: 'app-match-card',
-  imports: [LucideAngularModule, NgClass, PredictionForm, DatePipe],
+  imports: [LucideAngularModule, PredictionForm, DatePipe],
   templateUrl: './match-card.html',
   styleUrl: './match-card.css',
 })

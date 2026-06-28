@@ -34,12 +34,30 @@ export class Matches implements OnInit {
 
   userId: number | null = null;
   activeTab: 'all' | 'predictions' | 'played' = 'all';
-  sortOrder: 'asc' | 'desc' = 'asc';
+  sortOrder: 'asc' | 'desc' | 'closest' = 'closest';
   selectedGroup: string = 'all';
+  selectedPhase: string = 'all';
   searchQuery: string = '';
+
+  readonly phases = [
+    { key: 'group',   label: 'Fase de Grupos', test: (r: string) => r?.startsWith('Matchday') },
+    { key: 'round32', label: 'Dieciseisavos',   test: (r: string) => r === 'Round of 32' },
+    { key: 'round16', label: 'Octavos',          test: (r: string) => r === 'Round of 16' },
+    { key: 'qf',      label: 'Cuartos',          test: (r: string) => r === 'Quarter-final' },
+    { key: 'sf',      label: 'Semifinal',         test: (r: string) => r === 'Semi-final' },
+    { key: 'final',   label: 'Final',             test: (r: string) => r === 'Final' },
+  ];
+
+  get availablePhases() {
+    return this.phases.filter((p) => this.matches.some((m) => p.test(m.round)));
+  }
 
   get availableGroups(): string[] {
     return [...new Set(this.matches.map((m) => m.group).filter(Boolean))].sort();
+  }
+
+  get isGroupPhase(): boolean {
+    return this.selectedPhase === 'all' || this.selectedPhase === 'group';
   }
 
   ngOnInit() {
@@ -109,6 +127,11 @@ export class Matches implements OnInit {
       result = result.filter((match) => match.homeGoals !== null && match.awayGoals !== null);
     }
 
+    if (this.selectedPhase !== 'all') {
+      const phase = this.phases.find((p) => p.key === this.selectedPhase);
+      if (phase) result = result.filter((m) => phase.test(m.round));
+    }
+
     if (this.selectedGroup !== 'all') {
       result = result.filter((match) => match.group === this.selectedGroup);
     }
@@ -126,7 +149,13 @@ export class Matches implements OnInit {
     }
 
     return result.slice().sort((a, b) => {
-      const diff = new Date(a.matchDate).getTime() - new Date(b.matchDate).getTime();
+      const dateA = new Date(a.matchDate).getTime();
+      const dateB = new Date(b.matchDate).getTime();
+      if (this.sortOrder === 'closest') {
+        const now = Date.now();
+        return Math.abs(dateA - now) - Math.abs(dateB - now);
+      }
+      const diff = dateA - dateB;
       return this.sortOrder === 'asc' ? diff : -diff;
     });
   }

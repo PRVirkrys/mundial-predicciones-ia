@@ -9,4 +9,5 @@ export interface Match {
   homeTeamFlag: string;
   awayTeamFlag: string;
   group: string;
+  round: string;
 }
