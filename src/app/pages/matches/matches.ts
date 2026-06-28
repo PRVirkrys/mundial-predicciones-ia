@@ -124,7 +124,11 @@ export class Matches implements OnInit {
     this.cdr.detectChanges();
   }
 
-  getMatchesFiltered(): Match[] {
+  get isSegmentedView(): boolean {
+    return this.sortOrder === 'closest';
+  }
+
+  private getFilteredBase(): Match[] {
     let result = this.matches;
 
     if (this.activeTab === 'predictions') {
@@ -166,15 +170,32 @@ export class Matches implements OnInit {
       );
     }
 
-    return result.slice().sort((a, b) => {
+    return result;
+  }
+
+  getMatchesFiltered(): Match[] {
+    return this.getFilteredBase().slice().sort((a, b) => {
       const dateA = new Date(a.matchDate).getTime();
       const dateB = new Date(b.matchDate).getTime();
-      if (this.sortOrder === 'closest') {
-        const now = Date.now();
-        return Math.abs(dateA - now) - Math.abs(dateB - now);
-      }
       const diff = dateA - dateB;
       return this.sortOrder === 'asc' ? diff : -diff;
     });
+  }
+
+  getUpcomingFiltered(): Match[] {
+    const now = Date.now();
+    return this.getFilteredBase()
+      .filter((m) => m.homeGoals === null || m.awayGoals === null)
+      .sort((a, b) => {
+        const dateA = new Date(a.matchDate).getTime();
+        const dateB = new Date(b.matchDate).getTime();
+        return Math.abs(dateA - now) - Math.abs(dateB - now);
+      });
+  }
+
+  getPlayedFiltered(): Match[] {
+    return this.getFilteredBase()
+      .filter((m) => m.homeGoals !== null && m.awayGoals !== null)
+      .sort((a, b) => new Date(b.matchDate).getTime() - new Date(a.matchDate).getTime());
   }
 }

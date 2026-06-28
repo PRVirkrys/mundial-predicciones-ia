@@ -51,7 +51,11 @@ export class PlayerProfile implements OnInit {
     return this.selectedPhase === 'all' || this.selectedPhase === 'group';
   }
 
-  get filteredPredictions(): Prediction[] {
+  get isSegmentedView(): boolean {
+    return this.sortOrder === 'closest';
+  }
+
+  private get filteredBase(): Prediction[] {
     let result = this.predictions;
 
     if (this.selectedPhase !== 'all') {
@@ -86,6 +90,22 @@ export class PlayerProfile implements OnInit {
     }
 
     return result;
+  }
+
+  get filteredPredictions(): Prediction[] {
+    return this.filteredBase;
+  }
+
+  get filteredUpcomingPredictions(): Prediction[] {
+    return this.filteredBase.filter(
+      (p) => p.match.homeGoals === null || p.match.awayGoals === null,
+    );
+  }
+
+  get filteredPlayedPredictions(): Prediction[] {
+    return this.filteredBase
+      .filter((p) => p.match.homeGoals !== null && p.match.awayGoals !== null)
+      .sort((a, b) => new Date(b.match.matchDate).getTime() - new Date(a.match.matchDate).getTime());
   }
 
   clearSearch() {

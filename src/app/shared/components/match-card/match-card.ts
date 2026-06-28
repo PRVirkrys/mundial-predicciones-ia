@@ -41,6 +41,18 @@ export class MatchCard {
     return this.prediction?.correctWinner === false;
   }
 
+  get groupOrRound(): string {
+    if (this.match.group) return this.match.group;
+    const labels: Record<string, string> = {
+      'Round of 32':  'Dieciseisavos',
+      'Round of 16':  'Octavos',
+      'Quarter-final': 'Cuartos de final',
+      'Semi-final':   'Semifinal',
+      'Final':        'Final',
+    };
+    return labels[this.match.round] ?? this.match.round;
+  }
+
   teamName(name: string): string {
     return getTeamName(name);
   }

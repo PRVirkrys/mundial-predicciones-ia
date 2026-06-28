@@ -54,18 +54,10 @@
     <!-- Fila 2: Filtro resultado (full width) -->
     <div class="join w-full">
       <button
-        class="join-item btn btn-sm flex-1"
-        [class.btn-neutral]="selectedResult === 'all'"
-        [class.btn-ghost]="selectedResult !== 'all'"
-        (click)="selectedResult = 'all'"
-      >
-        Todos
-      </button>
-      <button
         class="join-item btn btn-sm btn-soft flex-1"
         [class.btn-success]="selectedResult === 'exact'"
         [class.btn-ghost]="selectedResult !== 'exact'"
-        (click)="selectedResult = 'exact'"
+        (click)="selectedResult = selectedResult === 'exact' ? 'all' : 'exact'"
       >
         Exacto ✓
       </button>
@@ -73,7 +65,7 @@
         class="join-item btn btn-sm btn-soft flex-1"
         [class.btn-warning]="selectedResult === 'winner'"
         [class.btn-ghost]="selectedResult !== 'winner'"
-        (click)="selectedResult = 'winner'"
+        (click)="selectedResult = selectedResult === 'winner' ? 'all' : 'winner'"
       >
         Ganador ✓
       </button>
@@ -81,7 +73,7 @@
         class="join-item btn btn-sm btn-soft flex-1"
         [class.btn-error]="selectedResult === 'failed'"
         [class.btn-ghost]="selectedResult !== 'failed'"
-        (click)="selectedResult = 'failed'"
+        (click)="selectedResult = selectedResult === 'failed' ? 'all' : 'failed'"
       >
         Fallado ✗
       </button>
@@ -91,7 +83,7 @@
             class="join-item btn btn-sm btn-soft flex-1"
             [class.btn-neutral]="selectedResult === 'unpredicted'"
             [class.btn-ghost]="selectedResult !== 'unpredicted'"
-            (click)="selectedResult = 'unpredicted'"
+            (click)="selectedResult = selectedResult === 'unpredicted' ? 'all' : 'unpredicted'"
           >
             Sin pred.
           </button>
@@ -100,7 +92,7 @@
             class="join-item btn btn-sm btn-soft flex-1"
             [class.btn-neutral]="selectedResult === 'pending'"
             [class.btn-ghost]="selectedResult !== 'pending'"
-            (click)="selectedResult = 'pending'"
+            (click)="selectedResult = selectedResult === 'pending' ? 'all' : 'pending'"
           >
             Pendiente
           </button>
@@ -138,13 +130,37 @@
   </div>
 
   <!-- Contenido -->
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-    @for (match of getMatchesFiltered(); track match.id) {
-      <app-match-card
-        [match]="match"
-        [prediction]="getPredictionForMatch(match.id)"
-        (predictionSaved)="predictionSaved()"
-      ></app-match-card>
+  @if (isSegmentedView) {
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      @for (match of getUpcomingFiltered(); track match.id) {
+        <app-match-card
+          [match]="match"
+          [prediction]="getPredictionForMatch(match.id)"
+          (predictionSaved)="predictionSaved()"
+        ></app-match-card>
+      }
+    </div>
+    @if (getPlayedFiltered().length > 0) {
+      <div class="divider mt-6 mb-2 text-sm font-semibold text-base-content/50">Jugados</div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        @for (match of getPlayedFiltered(); track match.id) {
+          <app-match-card
+            [match]="match"
+            [prediction]="getPredictionForMatch(match.id)"
+            (predictionSaved)="predictionSaved()"
+          ></app-match-card>
+        }
+      </div>
     }
-  </div>
+  } @else {
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      @for (match of getMatchesFiltered(); track match.id) {
+        <app-match-card
+          [match]="match"
+          [prediction]="getPredictionForMatch(match.id)"
+          (predictionSaved)="predictionSaved()"
+        ></app-match-card>
+      }
+    </div>
+  }
 </div>
