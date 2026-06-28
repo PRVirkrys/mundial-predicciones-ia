@@ -23,30 +23,94 @@
 
   <!-- Tabs + Filtros -->
   <div class="flex flex-col gap-3 mb-5">
-    <!-- Tabs: full width on mobile -->
-    <div role="tablist" class="tabs tabs-box w-full sm:w-auto">
-      <a role="tab" class="tab flex-1 sm:flex-none" [class.tab-active]="activeTab === 'all'" (click)="activeTab = 'all'"
-        >Todos</a
-      >
+    <!-- Fila 1: Tabs -->
+    <div role="tablist" class="tabs tabs-box w-full">
       <a
         role="tab"
-        class="tab flex-1 sm:flex-none"
+        class="tab flex-1"
+        [class.tab-active]="activeTab === 'all'"
+        (click)="setActiveTab('all')"
+      >
+        Todos
+      </a>
+      <a
+        role="tab"
+        class="tab flex-1"
         [class.tab-active]="activeTab === 'predictions'"
-        (click)="activeTab = 'predictions'"
-        >Mis predicciones</a
+        (click)="setActiveTab('predictions')"
       >
+        Mis predicciones
+      </a>
       <a
         role="tab"
-        class="tab flex-1 sm:flex-none"
+        class="tab flex-1"
         [class.tab-active]="activeTab === 'played'"
-        (click)="activeTab = 'played'"
-        >Jugados</a
+        (click)="setActiveTab('played')"
       >
+        Jugados
+      </a>
     </div>
 
-    <!-- Filtros -->
-    <div class="flex flex-wrap items-center gap-2">
-      <select class="select select-sm select-bordered flex-1 sm:flex-none sm:w-44" [(ngModel)]="selectedPhase">
+    <!-- Fila 2: Filtro resultado (full width) -->
+    <div class="join w-full">
+      <button
+        class="join-item btn btn-sm flex-1"
+        [class.btn-neutral]="selectedResult === 'all'"
+        [class.btn-ghost]="selectedResult !== 'all'"
+        (click)="selectedResult = 'all'"
+      >
+        Todos
+      </button>
+      <button
+        class="join-item btn btn-sm btn-soft flex-1"
+        [class.btn-success]="selectedResult === 'exact'"
+        [class.btn-ghost]="selectedResult !== 'exact'"
+        (click)="selectedResult = 'exact'"
+      >
+        Exacto ✓
+      </button>
+      <button
+        class="join-item btn btn-sm btn-soft flex-1"
+        [class.btn-warning]="selectedResult === 'winner'"
+        [class.btn-ghost]="selectedResult !== 'winner'"
+        (click)="selectedResult = 'winner'"
+      >
+        Ganador ✓
+      </button>
+      <button
+        class="join-item btn btn-sm btn-soft flex-1"
+        [class.btn-error]="selectedResult === 'failed'"
+        [class.btn-ghost]="selectedResult !== 'failed'"
+        (click)="selectedResult = 'failed'"
+      >
+        Fallado ✗
+      </button>
+      @if (activeTab !== 'predictions') {
+        @if (activeTab === 'played') {
+          <button
+            class="join-item btn btn-sm btn-soft flex-1"
+            [class.btn-neutral]="selectedResult === 'unpredicted'"
+            [class.btn-ghost]="selectedResult !== 'unpredicted'"
+            (click)="selectedResult = 'unpredicted'"
+          >
+            Sin pred.
+          </button>
+        } @else {
+          <button
+            class="join-item btn btn-sm btn-soft flex-1"
+            [class.btn-neutral]="selectedResult === 'pending'"
+            [class.btn-ghost]="selectedResult !== 'pending'"
+            (click)="selectedResult = 'pending'"
+          >
+            Pendiente
+          </button>
+        }
+      }
+    </div>
+
+    <!-- Fila 3: Selects (fase, grupo, orden) -->
+    <div class="flex flex-wrap gap-2">
+      <select class="select select-sm select-bordered flex-1 min-w-36" [(ngModel)]="selectedPhase">
         <option value="all">Todas las fases</option>
         @for (phase of availablePhases; track phase.key) {
           <option [value]="phase.key">{{ phase.label }}</option>
@@ -54,7 +118,10 @@
       </select>
 
       @if (isGroupPhase) {
-        <select class="select select-sm select-bordered flex-1 sm:flex-none sm:w-44" [(ngModel)]="selectedGroup">
+        <select
+          class="select select-sm select-bordered flex-1 min-w-36"
+          [(ngModel)]="selectedGroup"
+        >
           <option value="all">Todos los grupos</option>
           @for (group of availableGroups; track group) {
             <option [value]="group">{{ group }}</option>
@@ -62,15 +129,15 @@
         </select>
       }
 
-      <select class="select select-sm select-bordered ml-auto sm:ml-0 sm:w-52" [(ngModel)]="sortOrder">
-        <option value="asc">Más próximos primero</option>
-        <option value="desc">Más lejanos primero</option>
-        <option value="closest">Más cercanos a hoy</option>
+      <select class="select select-sm select-bordered flex-1 min-w-40" [(ngModel)]="sortOrder">
+        <option value="asc">Ascendente</option>
+        <option value="desc">Descendente</option>
+        <option value="closest">Proximos</option>
       </select>
     </div>
   </div>
 
-  <!-- Contenido de tab activo -->
+  <!-- Contenido -->
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
     @for (match of getMatchesFiltered(); track match.id) {
       <app-match-card

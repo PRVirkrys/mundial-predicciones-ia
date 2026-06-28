@@ -52,3 +52,10 @@ export const TEAM_NAMES: { [key: string]: string } = {
 export function getTeamName(name: string): string {
   return TEAM_NAMES[name] || name;
 }
+
+export function normalizeText(text: string): string {
+  return text
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')
+    .toLowerCase();
+}

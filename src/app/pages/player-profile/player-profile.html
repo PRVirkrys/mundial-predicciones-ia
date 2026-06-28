@@ -1,5 +1,4 @@
 <div class="max-w-2xl mx-auto flex flex-col gap-6">
-
   <!-- Back -->
   <button class="btn btn-ghost btn-sm self-start gap-1 -ml-2" (click)="goBack()">
     <lucide-icon name="arrow-left" size="16" color="currentColor"></lucide-icon>
@@ -11,7 +10,6 @@
       <span class="loading loading-spinner loading-md text-primary"></span>
     </div>
   } @else if (user) {
-
     <!-- Cabecera -->
     <div class="card bg-base-200 shadow-sm">
       <div class="card-body items-center text-center p-6">
@@ -43,26 +41,118 @@
 
     <!-- Predicciones -->
     <div>
-      <div class="flex items-center justify-between mb-3">
-        <h3 class="text-base font-bold">Predicciones de {{ user.name }}</h3>
-        @if (hasMore) {
-          <button class="btn btn-ghost btn-sm text-primary" (click)="showAll = !showAll">
-            {{ showAll ? 'Ver menos' : 'Ver todas' }}
+      <h3 class="text-base font-bold mb-3">Predicciones de {{ user.name }}</h3>
+
+      <!-- Buscador -->
+      <label class="input input-bordered flex items-center gap-2 w-full mb-3">
+        <lucide-icon name="search" size="16" color="currentColor" class="opacity-50"></lucide-icon>
+        <input
+          type="search"
+          class="grow"
+          placeholder="Buscar equipo o grupo..."
+          [(ngModel)]="searchQuery"
+        />
+        @if (searchQuery) {
+          <button class="btn btn-ghost btn-xs btn-circle" (click)="clearSearch()">
+            <lucide-icon name="x" size="14" color="currentColor"></lucide-icon>
           </button>
         }
+      </label>
+
+      <!-- Filtros -->
+      <div class="flex flex-wrap items-center gap-2 mb-4">
+        <select
+          class="select select-sm select-bordered flex-1 sm:flex-none sm:w-44"
+          [(ngModel)]="selectedPhase"
+        >
+          <option value="all">Todas las fases</option>
+          @for (phase of availablePhases; track phase.key) {
+            <option [value]="phase.key">{{ phase.label }}</option>
+          }
+        </select>
+
+        @if (isGroupPhase) {
+          <select
+            class="select select-sm select-bordered flex-1 sm:flex-none sm:w-44"
+            [(ngModel)]="selectedGroup"
+          >
+            <option value="all">Todos los grupos</option>
+            @for (group of availableGroups; track group) {
+              <option [value]="group">{{ group }}</option>
+            }
+          </select>
+        }
+
+        <!-- Filtro resultado -->
+        <div class="join w-full sm:w-auto">
+          <button
+            class="join-item btn btn-sm flex-1 sm:flex-none"
+            [class.btn-neutral]="selectedResult === 'all'"
+            [class.btn-ghost]="selectedResult !== 'all'"
+            (click)="selectedResult = 'all'"
+          >
+            Todos
+          </button>
+          <button
+            class="join-item btn btn-sm btn-soft flex-1 sm:flex-none"
+            [class.btn-success]="selectedResult === 'exact'"
+            [class.btn-ghost]="selectedResult !== 'exact'"
+            (click)="selectedResult = 'exact'"
+          >
+            Exacto ✓
+          </button>
+          <button
+            class="join-item btn btn-sm btn-soft flex-1 sm:flex-none"
+            [class.btn-warning]="selectedResult === 'winner'"
+            [class.btn-ghost]="selectedResult !== 'winner'"
+            (click)="selectedResult = 'winner'"
+          >
+            Ganador ✓
+          </button>
+          <button
+            class="join-item btn btn-sm btn-soft flex-1 sm:flex-none"
+            [class.btn-error]="selectedResult === 'failed'"
+            [class.btn-ghost]="selectedResult !== 'failed'"
+            (click)="selectedResult = 'failed'"
+          >
+            Fallado ✗
+          </button>
+          <button
+            class="join-item btn btn-sm btn-soft flex-1 sm:flex-none"
+            [class.btn-neutral]="selectedResult === 'pending'"
+            [class.btn-ghost]="selectedResult !== 'pending'"
+            (click)="selectedResult = 'pending'"
+          >
+            Pendiente
+          </button>
+        </div>
+
+        <select
+          class="select select-sm select-bordered ml-auto sm:ml-0 sm:w-52"
+          [(ngModel)]="sortOrder"
+        >
+          <option value="asc">Ascendente</option>
+          <option value="desc">Descendente</option>
+          <option value="closest">Proximos</option>
+        </select>
       </div>
 
       @if (predictions.length === 0) {
         <p class="text-sm text-base-content/50 text-center py-6">
           Este jugador aún no tiene predicciones
         </p>
+      } @else if (filteredPredictions.length === 0) {
+        <p class="text-sm text-base-content/50 text-center py-6">
+          No hay predicciones que coincidan con los filtros
+        </p>
       } @else {
-        <app-predictions-list [predictions]="predictions" [limit]="displayLimit"></app-predictions-list>
+        <app-predictions-list
+          [predictions]="filteredPredictions"
+          [sortOrder]="sortOrder"
+        ></app-predictions-list>
       }
     </div>
-
   } @else {
     <p class="text-center text-base-content/50 py-12">Jugador no encontrado</p>
   }
-
 </div>

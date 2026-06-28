@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, DestroyRef, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { getTeamName } from '../../utils/team-names';
+import { getTeamName, normalizeText } from '../../utils/team-names';
 import { MatchCard } from '../../shared/components/match-card/match-card';
 import { MatchService } from '../../core/services/match.service';
 import { PredictionService } from '../../core/services/prediction.service';
@@ -37,6 +37,7 @@ export class Matches implements OnInit {
   sortOrder: 'asc' | 'desc' | 'closest' = 'closest';
   selectedGroup: string = 'all';
   selectedPhase: string = 'all';
+  selectedResult: 'all' | 'exact' | 'winner' | 'failed' | 'pending' | 'unpredicted' = 'all';
   searchQuery: string = '';
 
   readonly phases = [
@@ -103,6 +104,11 @@ export class Matches implements OnInit {
     return this.predictionByUser.find((p) => p.match.id === matchId) ?? null;
   }
 
+  setActiveTab(tab: 'all' | 'predictions' | 'played') {
+    this.activeTab = tab;
+    this.selectedResult = 'all';
+  }
+
   predictionSaved() {
     if (this.userId) {
       this.loadUserPredictions(this.userId);
@@ -136,15 +142,27 @@ export class Matches implements OnInit {
       result = result.filter((match) => match.group === this.selectedGroup);
     }
 
+    if (this.selectedResult !== 'all') {
+      result = result.filter((match) => {
+        const pred = this.getPredictionForMatch(match.id);
+        if (this.selectedResult === 'exact')        return pred?.correctWinner === true  && pred?.correctScore === true;
+        if (this.selectedResult === 'winner')       return pred?.correctWinner === true  && pred?.correctScore === false;
+        if (this.selectedResult === 'failed')       return pred?.correctWinner === false;
+        if (this.selectedResult === 'pending')      return pred !== null && pred.correctWinner === null;
+        if (this.selectedResult === 'unpredicted')  return pred === null;
+        return true;
+      });
+    }
+
     if (this.searchQuery.trim()) {
-      const q = this.searchQuery.toLowerCase().trim();
+      const q = normalizeText(this.searchQuery.trim());
       result = result.filter(
         (match) =>
-          match.homeTeam?.toLowerCase().includes(q) ||
-          match.awayTeam?.toLowerCase().includes(q) ||
-          getTeamName(match.homeTeam)?.toLowerCase().includes(q) ||
-          getTeamName(match.awayTeam)?.toLowerCase().includes(q) ||
-          match.group?.toLowerCase().includes(q),
+          normalizeText(match.homeTeam ?? '').includes(q) ||
+          normalizeText(match.awayTeam ?? '').includes(q) ||
+          normalizeText(getTeamName(match.homeTeam)).includes(q) ||
+          normalizeText(getTeamName(match.awayTeam)).includes(q) ||
+          normalizeText(match.group ?? '').includes(q),
       );
     }
 

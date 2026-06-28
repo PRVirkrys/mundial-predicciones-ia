@@ -12,11 +12,18 @@ import { getTeamName } from '../../../utils/team-names';
 export class PredictionsList {
   @Input() predictions: Prediction[] = [];
   @Input() limit: number | null = null;
+  @Input() sortOrder: 'asc' | 'desc' | 'closest' = 'desc';
 
   get displayedPredictions(): Prediction[] {
-    const sorted = [...this.predictions].sort(
-      (a, b) => new Date(b.match.matchDate).getTime() - new Date(a.match.matchDate).getTime(),
-    );
+    const sorted = [...this.predictions].sort((a, b) => {
+      const dateA = new Date(a.match.matchDate).getTime();
+      const dateB = new Date(b.match.matchDate).getTime();
+      if (this.sortOrder === 'closest') {
+        const now = Date.now();
+        return Math.abs(dateA - now) - Math.abs(dateB - now);
+      }
+      return this.sortOrder === 'asc' ? dateA - dateB : dateB - dateA;
+    });
     return this.limit ? sorted.slice(0, this.limit) : sorted;
   }
 
